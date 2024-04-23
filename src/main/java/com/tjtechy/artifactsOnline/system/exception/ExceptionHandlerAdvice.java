@@ -1,8 +1,8 @@
 package com.tjtechy.artifactsOnline.system.exception;
 
-import com.tjtechy.artifactsOnline.artifact.ArtifactNotFoundException;
 import com.tjtechy.artifactsOnline.system.Result;
 import com.tjtechy.artifactsOnline.system.StatusCode;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -18,14 +18,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-  @ExceptionHandler(ArtifactNotFoundException.class)
+  @ExceptionHandler(ObjectNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  Result handleArtifactNotFoundException(ArtifactNotFoundException exception){
+  Result handleObjectFoundException(ObjectNotFoundException exception){
 
     return new Result(false, StatusCode.NOT_FOUND, exception.getMessage());
   }
 
-  //exception handling when any required field is not privided
+  //exception handling when any required field is not provided
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   Result handleValidationException(MethodArgumentNotValidException ex){
