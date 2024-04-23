@@ -1,6 +1,7 @@
 package com.tjtechy.artifactsOnline.artifact;
 
 import com.tjtechy.artifactsOnline.artifact.utils.IdWorker;
+import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class ArtifactService {
   public Artifact findById(String artifactId){
 
     return this.artifactRepository.findById(artifactId)
-            .orElseThrow(()-> new ArtifactNotFoundException(artifactId));
+            .orElseThrow(()-> new ObjectNotFoundException("artifact",artifactId));
   }
 
   public List<Artifact> findAll(){
@@ -54,14 +55,14 @@ public class ArtifactService {
               return this.artifactRepository.save(oldArtifact);
 
             })
-            .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+            .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
   }
 
   public void delete(String artifactId){
     //first find if Id exist or not, then delete
 
     this.artifactRepository.findById(artifactId)
-            .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+            .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
     this.artifactRepository.deleteById(artifactId);
 
   }
