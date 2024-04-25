@@ -231,8 +231,55 @@ class WizardControllerTest {
             .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
             .andExpect(jsonPath("$.message").value("Could not find wizard with Id 4"))
             .andExpect(jsonPath("$.data").isEmpty());
-
-
   }
+
+  //6. Assign artifact
+  //positive scenario
+  @Test
+  void testAssignArtifactSuccess() throws Exception {
+    //Given
+    //mock the behaviour of service layer
+    doNothing().when(this.wizardService).assignArtifact(2, "125080601744904191");
+    //When and Then
+
+    this.mockMvc.perform(put(this.baseUrl + "/wizards/2/artifacts/125080601744904191").accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Artifact Assignment Success"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+
+  //6. Assign artifact
+  //negative scenario
+  @Test
+  void testAssignArtifactErrorWithNonExistingWizardId() throws Exception {
+    //Given
+    //mock the behaviour of service layer
+    doThrow(new ObjectNotFoundException("wizard", 5)).when(this.wizardService).assignArtifact(5, "125080601744904191");
+    //When and Then
+
+    this.mockMvc.perform(put(this.baseUrl + "/wizards/5/artifacts/125080601744904191").accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find wizard with Id 5"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+
+  //7. Assign artifact
+  //negative scenario
+  @Test
+  void testAssignArtifactErrorWithNonExistingArtifactId() throws Exception {
+    //Given
+    //mock the behaviour of service layer
+    doThrow(new ObjectNotFoundException("artifact", "125080601744904199")).when(this.wizardService).assignArtifact(2, "125080601744904199");
+    //When and Then
+
+    this.mockMvc.perform(put(this.baseUrl + "/wizards/2/artifacts/125080601744904199").accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find artifact with Id 125080601744904199"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+
 
 }

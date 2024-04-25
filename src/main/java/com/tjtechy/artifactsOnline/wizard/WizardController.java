@@ -83,4 +83,14 @@ public class WizardController {
     return new Result(true, StatusCode.SUCCESS, "Delete Success");
   }
 
+  //method (put) to handle the request artifacts
+  //put method cos it is changing the ownership of artifact
+  //has two path params-->artifactId and wizardId
+  @PutMapping("/{wizardId}/artifacts/{artifactId}")
+  public Result assignArtifact(@PathVariable Integer wizardId, @PathVariable String artifactId){
+    this.wizardService.assignArtifact(wizardId, artifactId);
+    return new Result(true, StatusCode.SUCCESS, "Artifact Assignment Success");
+  }
+
+
 }
