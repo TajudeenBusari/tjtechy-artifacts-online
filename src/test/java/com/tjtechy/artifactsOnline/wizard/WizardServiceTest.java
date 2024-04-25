@@ -1,6 +1,9 @@
 package com.tjtechy.artifactsOnline.wizard;
 
+import com.tjtechy.artifactsOnline.artifact.Artifact;
+import com.tjtechy.artifactsOnline.artifact.ArtifactRepository;
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +23,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 
 @ExtendWith(MockitoExtension.class)
 class WizardServiceTest {
 
   @Mock
   WizardRepository wizardRepository;
+
+  @Mock
+  ArtifactRepository artifactRepository;
 
   @InjectMocks
   WizardService wizardService;
@@ -198,5 +206,98 @@ class WizardServiceTest {
     verify(this.wizardRepository, times(1)).findById(1);
   }
 
+  //6. Assign artifact
+  //positive scenario
+  @Test
+  void testAssignArtifactSuccess(){
+    //Given
+    //create fake data for artifact and wizards
+    //the goal is to assign the artifact which originally belong to Harry Potter to Neville Longbottom
+    //since this method depends on both wizard and artifact, then we need to inject the artifactRepository
+    Artifact artifact = new Artifact();
+    artifact.setId("1250808601744904192");
+    artifact.setName("Invisibility Cloak");
+    artifact.setDescription("An invisibility cloak is used to make the wearer invisible");
+    artifact.setImageUrl("ImageUrl");
 
+    Wizard wizard2 = new Wizard();
+    wizard2.setId(2);
+    wizard2.setName("Harry Porter");
+    wizard2.addArtifact(artifact);
+
+    Wizard wizard3 = new Wizard();
+    wizard3.setId(3);
+    wizard3.setName("Neville Longbottom");
+
+
+    given(this.artifactRepository.findById("1250808601744904192")).willReturn(Optional.of(artifact));
+    given(this.wizardRepository.findById(3)).willReturn(Optional.of(wizard3));
+
+    //When
+    //BOTH EXIST
+    this.wizardService.assignArtifact(3, "1250808601744904192");
+
+    //Then
+    //after assignment
+    assertThat(artifact.getOwner().getId()).isEqualTo(3);
+    //assertThat(wizard3.getArtifacts()).toString();
+    assertThat(wizard3.getArtifacts()).isEqualToComparingOnlyGivenFields(artifact);
+  }
+
+  //7. Assign artifact
+  //negative scenario
+  @Test
+  void testAssignArtifactErrorWithNonExistingWizardId(){
+    //Given
+    //create fake data for artifact and wizards
+    //the goal is to assign the artifact which originally belong to Harry Potter to Neville Longbottom
+    //since this method depends on both wizard and artifact, then we need to inject the artifactRepository
+    Artifact artifact = new Artifact();
+    artifact.setId("1250808601744904192");
+    artifact.setName("Invisibility Cloak");
+    artifact.setDescription("An invisibility cloak is used to make the wearer invisible");
+    artifact.setImageUrl("ImageUrl");
+
+    Wizard wizard2 = new Wizard();
+    wizard2.setId(2);
+    wizard2.setName("Harry Porter");
+    wizard2.addArtifact(artifact);
+
+
+    given(this.artifactRepository.findById("1250808601744904192")).willReturn(Optional.of(artifact));
+    given(this.wizardRepository.findById(3)).willReturn(Optional.empty());
+
+    //When
+   Throwable thrown = assertThrows(ObjectNotFoundException.class, () -> {
+     this.wizardService.assignArtifact(3, "1250808601744904192");
+   });
+
+    //Then
+    assertThat(thrown)
+            .isInstanceOf(ObjectNotFoundException.class)
+                    .hasMessage("Could not find wizard with Id 3");
+    assertThat(artifact.getOwner().getId()).isEqualTo(2);
+
+  }
+
+  //8. Assign artifact
+  //negative scenario
+  @Test
+  void testAssignArtifactErrorWithNonExistingArtifactId(){
+    //Given
+    given(this.artifactRepository.findById("1250808601744904192")).willReturn(Optional.empty());
+
+
+    //When
+    Throwable thrown = assertThrows(ObjectNotFoundException.class, () -> {
+      this.wizardService.assignArtifact(3, "1250808601744904192");
+    });
+
+    //Then
+
+    assertThat(thrown)
+            .isInstanceOf(ObjectNotFoundException.class)
+            .hasMessage("Could not find artifact with Id 1250808601744904192");
+
+  }
 }
