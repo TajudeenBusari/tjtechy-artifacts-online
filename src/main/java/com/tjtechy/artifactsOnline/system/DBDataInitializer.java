@@ -2,6 +2,8 @@ package com.tjtechy.artifactsOnline.system;
 
 import com.tjtechy.artifactsOnline.artifact.Artifact;
 import com.tjtechy.artifactsOnline.artifact.ArtifactRepository;
+import com.tjtechy.artifactsOnline.tjtechyuser.TJUser;
+import com.tjtechy.artifactsOnline.tjtechyuser.UserRepository;
 import com.tjtechy.artifactsOnline.wizard.Wizard;
 import com.tjtechy.artifactsOnline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -15,9 +17,14 @@ public class DBDataInitializer implements CommandLineRunner {
 
   private final WizardRepository wizardRepository;
 
-  public DBDataInitializer(ArtifactRepository artifactRepository, WizardRepository wizardRepository) {
+  private final UserRepository userRepository;
+
+  public DBDataInitializer(ArtifactRepository artifactRepository,
+                           WizardRepository wizardRepository,
+                           UserRepository userRepository) {
     this.artifactRepository = artifactRepository;
     this.wizardRepository = wizardRepository;
+    this.userRepository = userRepository;
   }
 
   @Override
@@ -77,6 +84,34 @@ public class DBDataInitializer implements CommandLineRunner {
     wizard3.setId(3);
     wizard3.setName("Neville Longbotton");
     wizard3.addArtifact(artifact5);
+
+    //create some users
+    TJUser user1 = new TJUser();
+    user1.setId(1);
+    user1.setUsername("tjbaba");
+    user1.setEnabled(true);
+    user1.setPassword("123456");
+    user1.setRoles("admin user");
+
+    TJUser user2 = new TJUser();
+    user2.setId(2);
+    user2.setUsername("idowu");
+    user2.setEnabled(true);
+    user2.setPassword("78910");
+    user2.setRoles("user");
+
+    TJUser user3 = new TJUser();
+    user3.setId(3);
+    user3.setUsername("tom");
+    user3.setEnabled(false);
+    user3.setPassword("qwerty");
+    user3.setRoles("user");
+
+    //save in DB
+    this.userRepository.save(user1);
+    this.userRepository.save(user2);
+    this.userRepository.save(user3);
+
 
     //save wizards to DB
     /*this also saves all associated artifacts because we have

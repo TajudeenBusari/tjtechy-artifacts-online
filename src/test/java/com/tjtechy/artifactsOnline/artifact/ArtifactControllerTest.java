@@ -275,7 +275,6 @@ class ArtifactControllerTest {
             .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
             .andExpect(jsonPath("$.message").value("Could not find artifact with Id 12350808601744904191"))
             .andExpect(jsonPath("$.data").isEmpty());
-
   }
 
 }
