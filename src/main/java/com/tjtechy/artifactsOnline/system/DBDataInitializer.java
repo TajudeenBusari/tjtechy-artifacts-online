@@ -4,6 +4,7 @@ import com.tjtechy.artifactsOnline.artifact.Artifact;
 import com.tjtechy.artifactsOnline.artifact.ArtifactRepository;
 import com.tjtechy.artifactsOnline.tjtechyuser.TJUser;
 import com.tjtechy.artifactsOnline.tjtechyuser.UserRepository;
+import com.tjtechy.artifactsOnline.tjtechyuser.UserService;
 import com.tjtechy.artifactsOnline.wizard.Wizard;
 import com.tjtechy.artifactsOnline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -16,15 +17,15 @@ public class DBDataInitializer implements CommandLineRunner {
   private final ArtifactRepository artifactRepository;
 
   private final WizardRepository wizardRepository;
-
-  private final UserRepository userRepository;
+  //private final UserRepository userRepository;
+  private final UserService userService;
 
   public DBDataInitializer(ArtifactRepository artifactRepository,
                            WizardRepository wizardRepository,
-                           UserRepository userRepository) {
+                           UserService userService) {
     this.artifactRepository = artifactRepository;
     this.wizardRepository = wizardRepository;
-    this.userRepository = userRepository;
+    this.userService = userService;
   }
 
   @Override
@@ -33,7 +34,7 @@ public class DBDataInitializer implements CommandLineRunner {
     Artifact artifact1 = new Artifact();
     artifact1.setId("125080601744904191");
     artifact1.setName("Deluminator");
-    artifact1.setDescription("A deluminator is a device invented by Albus Dumbledore that resembles...");
+    artifact1.setDescription("A deluminator is a device invented by Albus Dumbledore that resembles");
     artifact1.setImageUrl("ImageUrl");
 
     Artifact artifact2 = new Artifact();
@@ -57,13 +58,13 @@ public class DBDataInitializer implements CommandLineRunner {
     Artifact artifact5 = new Artifact();
     artifact4.setId("125080601744904195");
     artifact4.setName("The sword of Gryffindor");
-    artifact4.setDescription("The globin made sword adorned with large rubies on...");
+    artifact4.setDescription("The globin made sword adorned with large rubies on");
     artifact4.setImageUrl("ImageUrl");
 
     Artifact artifact6 = new Artifact();
     artifact4.setId("125080601744904196");
     artifact4.setName("Resurrection stone");
-    artifact4.setDescription("The Resurrection stone allow the holders...");
+    artifact4.setDescription("The Resurrection stone allow the holders");
     artifact4.setImageUrl("ImageUrl");
 
 
@@ -88,16 +89,16 @@ public class DBDataInitializer implements CommandLineRunner {
     //create some users
     TJUser user1 = new TJUser();
     user1.setId(1);
-    user1.setUsername("tjbaba");
+    user1.setUsername("john");
     user1.setEnabled(true);
     user1.setPassword("123456");
     user1.setRoles("admin user");
 
     TJUser user2 = new TJUser();
     user2.setId(2);
-    user2.setUsername("idowu");
+    user2.setUsername("eric");
     user2.setEnabled(true);
-    user2.setPassword("78910");
+    user2.setPassword("654321");
     user2.setRoles("user");
 
     TJUser user3 = new TJUser();
@@ -108,9 +109,15 @@ public class DBDataInitializer implements CommandLineRunner {
     user3.setRoles("user");
 
     //save in DB
-    this.userRepository.save(user1);
-    this.userRepository.save(user2);
-    this.userRepository.save(user3);
+//    this.userRepository.save(user1);
+//    this.userRepository.save(user2);
+//    this.userRepository.save(user3);
+
+    //because the logic to encode password is in the service class, so we will use it here
+    //instead of the repo
+    this.userService.save(user1);
+    this.userService.save(user2);
+    this.userService.save(user3);
 
 
     //save wizards to DB
@@ -123,6 +130,8 @@ public class DBDataInitializer implements CommandLineRunner {
     wizardRepository.save(wizard2);
     wizardRepository.save(wizard3);
     artifactRepository.save(artifact6);
+
+
 
   }
 }

@@ -25,16 +25,16 @@ public class TJUser implements Serializable {
   @NotEmpty(message = "roles are required")
   private String roles; //space separated string e.g admin user
 
-  public TJUser() {
-  }
-
-  public TJUser(Integer id, String username, String password, boolean enabled, String roles) {
-    this.id = id;
-    this.username = username;
-    this.password = password;
-    this.enabled = enabled;
-    this.roles = roles;
-  }
+//  public TJUser() {
+//  }
+//
+//  public TJUser(Integer id, String username, String password, boolean enabled, String roles) {
+//    this.id = id;
+//    this.username = username;
+//    this.password = password;
+//    this.enabled = enabled;
+//    this.roles = roles;
+//  }
 
   public Integer getId() {
     return id;
@@ -76,10 +76,10 @@ public class TJUser implements Serializable {
     this.roles = roles;
   }
 
-  public TJUser(Integer id, String username, boolean enabled, String roles) {
-    this.id = id;
-    this.username = username;
-    this.enabled = enabled;
-    this.roles = roles;
-  }
+//  public TJUser(Integer id, String username, boolean enabled, String roles) {
+//    this.id = id;
+//    this.username = username;
+//    this.enabled = enabled;
+//    this.roles = roles;
+//  }
 }

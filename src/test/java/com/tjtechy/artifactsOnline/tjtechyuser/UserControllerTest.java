@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)//turn off spring security in this unit test
 class UserControllerTest {
 
   @Autowired
@@ -250,3 +250,5 @@ class UserControllerTest {
 
 }
 //I will skip all controller case tests
+//turn off spring security in this unit test because the
+// mockMvc will still need to hit the api end point and if such needs authentication, test will fail
