@@ -1,0 +1,28 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+#triggger for the work flow
+on:
+  pull_request:
+    branches:
+      - master
+
+#one work flow has one or more jobs. job id is here is build
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven #it is very good to have this line
+      - name: Build and test with maven
+        run: mvn --batch-mode package #prodduces the jar file
