@@ -2,6 +2,7 @@ package com.tjtechy.artifactsOnline.artifact;
 
 import com.tjtechy.artifactsOnline.artifact.utils.IdWorker;
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
+import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class ArtifactService {
             .orElseThrow(()-> new ObjectNotFoundException("artifact",artifactId));
   }
 
+  @Timed("findAllArtifactsService.time")
   public List<Artifact> findAll(){
 
     return this.artifactRepository.findAll();

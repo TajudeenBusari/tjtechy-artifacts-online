@@ -5,6 +5,7 @@ import com.tjtechy.artifactsOnline.artifact.converter.ArtifactToArtifactDtoConve
 import com.tjtechy.artifactsOnline.artifact.dto.ArtifactDto;
 import com.tjtechy.artifactsOnline.system.Result;
 import com.tjtechy.artifactsOnline.system.StatusCode;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +21,17 @@ public class ArtifactController {
   private final ArtifactToArtifactDtoConverter artifactToArtifactDtoConverter;
 
   private final ArtifactDtoToArtifactConverter artifactDtoToArtifactConverter;
+  //for metrics collection e.g counter metrics
+  private final MeterRegistry meterRegistry;
 
   public ArtifactController(ArtifactService artifactService,
                             ArtifactToArtifactDtoConverter artifactToArtifactDtoConverter,
-                            ArtifactDtoToArtifactConverter artifactDtoToArtifactConverter) {
+                            ArtifactDtoToArtifactConverter artifactDtoToArtifactConverter, MeterRegistry meterRegistry) {
 
     this.artifactService = artifactService;
     this.artifactToArtifactDtoConverter = artifactToArtifactDtoConverter;
     this.artifactDtoToArtifactConverter = artifactDtoToArtifactConverter;
+    this.meterRegistry = meterRegistry;
   }
 
   //find a particular artifact
@@ -35,6 +39,7 @@ public class ArtifactController {
   public Result findArtifactById(@PathVariable String artifactId){
 
     Artifact foundArtifact = this.artifactService.findById(artifactId);
+    meterRegistry.counter("artifact.id." + artifactId).increment();
     //convert found artifact to dto
     ArtifactDto artifactDto = this.artifactToArtifactDtoConverter.convert(foundArtifact);
 
