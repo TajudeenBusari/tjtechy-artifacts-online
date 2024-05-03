@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles(value = "development") //only used for test case class override any active profile defined in the application.ym file
 class WizardServiceTest {
 
   @Mock

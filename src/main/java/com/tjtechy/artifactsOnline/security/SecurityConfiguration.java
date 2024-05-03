@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -31,6 +33,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 @Configuration
+
+
 public class SecurityConfiguration {
 
   private final RSAPublicKey publicKey;
@@ -80,6 +84,7 @@ public class SecurityConfiguration {
                     .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                     .anyRequest().authenticated()//every other thing is authenticated.Always a good idea to put this as last
             )
+            //.headers(headers -> headers.frameOptions().disable())//for h2 console browser access
             .headers(headers -> headers.frameOptions().disable())//for h2 console browser access
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())

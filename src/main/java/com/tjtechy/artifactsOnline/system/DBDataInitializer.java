@@ -8,9 +8,11 @@ import com.tjtechy.artifactsOnline.tjtechyuser.UserService;
 import com.tjtechy.artifactsOnline.wizard.Wizard;
 import com.tjtechy.artifactsOnline.wizard.WizardRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("development")
 public class DBDataInitializer implements CommandLineRunner {
 
   //inject the ArtifactRepo and WizardRepo to add data to DB
@@ -140,6 +142,6 @@ public class DBDataInitializer implements CommandLineRunner {
 /*
 * This class implements the CommandLineRunner interface,
 * and it has a run method which must be implemented
-*
+* we add @profile here because we only want to use it in the dev environment
 *
 * */

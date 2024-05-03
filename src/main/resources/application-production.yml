@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    azure:
+      keyvault:
+        secret:
+          property-sources[0]:
+            endpoint: ${AZURE_KEY_VAULT_ENDPOINT} #environment variable
+
+  datasource:
+    url: ${datasource-url} #secrets from azure key vault
+    username: ${datasource-username} #secrets from azure key vault
+    password: ${datasource-password} #secrets from azure key vault
+  jpa:
+    hibernate:
+      ddl-auto: none #turn off the DDL auto generation
+
+
+
+#we will use the spring property placeholder feature to define the datasource properties else, running in the prod
+#environment will use he in memory as data source
+#As a db administrator, you must never hardcode your database credentials
+#for this, some may store in production server but the best is key vault
+#create a resource for this in azure
+#compatibility-verifier.enabled: false

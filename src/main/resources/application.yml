@@ -1,18 +1,20 @@
+#this file will be used to create profile to tell spring which property file should be used
+#application is loaded first, then it loads active profile using the naming convention
+#common settings to dev and prod are moved here
+
 spring:
-  datasource:
-    url: jdbc:h2:mem:tjtechy
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  jpa:
-    show-sql: true
+  profiles:
+    active: development #by default, the active profile is development, during production it will be replaced with production due to Azure's environment variables
+
   mvc:
     throw-exception-if-no-handler-found: true
-#define the api endpoint point
+
+  web:
+    resources:
+      add-mappings: false
+  #define the api endpoint point
 api:
   endpoint:
     base-url: /api/v1
 server:
-  port: 80
-
-
+  port: 90
