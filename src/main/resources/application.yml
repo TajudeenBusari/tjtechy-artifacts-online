@@ -18,3 +18,37 @@ api:
     base-url: /api/v1
 server:
   port: 90
+#to expose end point to actuator
+Management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,beans,configprops,heapdump,httpexchanges,loggers,mappings,custom-beans
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    env:
+      show-values: always
+
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true #it is important to add line 32 TO 34 for info to work, exposes the custom info defined below
+    git:
+      enable: true
+      mode: full
+    java:
+      enabled: true
+    os:
+      enabled: true
+info:
+  app:
+    name: tjtechy-artifacts-online
+    description: A web application that manages artifacts and wizards for Tjtechy School of Coding
+    version: @project.version@ #retrievs project version from pom.xml
+    author: Tajudeen Busari
+    links:
+      github: https://github.com/TajudeenBusari/tjtechy-artifacts-online

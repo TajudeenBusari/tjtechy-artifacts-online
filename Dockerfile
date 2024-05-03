@@ -10,6 +10,7 @@ COPY --from=builder application/dependencies/ ./
 COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
-#ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"] for springboot 3.2 and above
-
+#ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]##for springboot 3.2 below
+##for springboot 3.2 and above
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+##for springboot 3.2 and above
