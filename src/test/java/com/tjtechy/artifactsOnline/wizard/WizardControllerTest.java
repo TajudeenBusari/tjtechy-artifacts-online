@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)//turn off spring security
+@ActiveProfiles(value = "development") //only used for test case class override any active profile defined in the application.ym file
 class WizardControllerTest {
   @Autowired
   MockMvc mockMvc;
@@ -44,7 +46,7 @@ class WizardControllerTest {
 
   List<Wizard> wizards;
 
-  //inject the base url from application.yml file
+  //inject the base url from application-production.yml file
   @Value("${api.endpoint.base-url}")
   String baseUrl;
 
