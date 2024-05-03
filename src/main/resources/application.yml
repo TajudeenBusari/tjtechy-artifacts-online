@@ -17,4 +17,4 @@ api:
   endpoint:
     base-url: /api/v1
 server:
-  port: 90
+  port: 80
