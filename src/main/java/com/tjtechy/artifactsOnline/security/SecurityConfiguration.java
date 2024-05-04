@@ -82,8 +82,8 @@ public class SecurityConfiguration {
                     .hasAuthority("ROLE_admin") //protect the endpoint
                     .requestMatchers(HttpMethod.DELETE, baseUrl + "/users/**")
                     .hasAuthority("ROLE_admin")//protect the endpoint
-                    .requestMatchers(EndpointRequest.to("health", "info")).permitAll()
-                    .requestMatchers(EndpointRequest.toAnyEndpoint().excluding("health", "info")).hasAuthority("ROLE_admin")
+                    .requestMatchers(EndpointRequest.to("health", "info", "prometheus")).permitAll()
+                    .requestMatchers(EndpointRequest.toAnyEndpoint().excluding("health", "info", "prometheus")).hasAuthority("ROLE_admin")
                     .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                     .anyRequest().authenticated()//every other thing is authenticated.Always a good idea to put this as last
             )
