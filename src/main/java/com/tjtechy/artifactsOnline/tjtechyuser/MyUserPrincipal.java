@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class MyUserPrincipal implements UserDetails {
 
-  private TJUser tjUser;
+  private final TJUser tjUser;
 
   public MyUserPrincipal(TJUser tjUser) {
 

@@ -88,12 +88,13 @@ public class SecurityConfiguration {
                     .anyRequest().authenticated()//every other thing is authenticated.Always a good idea to put this as last
             )
             //.headers(headers -> headers.frameOptions().disable())//for h2 console browser access
-            .headers(headers -> headers.frameOptions().disable())//for h2 console browser access
+            .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())//for h2 console browser access
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
             //.httpBasic(Customizer.withDefaults())
             .httpBasic(httBasic -> httBasic.authenticationEntryPoint(this.customBasicAuthenticationEntryPoint))
-            .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt().and()
+            .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+                    .jwt(Customizer.withDefaults())
                     .authenticationEntryPoint(this.customBearerTokenAuthenticationEntryPoint)
                     .accessDeniedHandler(this.customBearerTokenAccessDeniedHandler))
 
