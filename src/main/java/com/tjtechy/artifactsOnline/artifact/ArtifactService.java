@@ -3,6 +3,7 @@ package com.tjtechy.artifactsOnline.artifact;
 import com.tjtechy.artifactsOnline.artifact.utils.IdWorker;
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class ArtifactService {
     this.idWorker = idWorker;
   }
 
+  @Observed(name = "artifact", contextualName = "findByIdService")
   public Artifact findById(String artifactId){
 
     return this.artifactRepository.findById(artifactId)

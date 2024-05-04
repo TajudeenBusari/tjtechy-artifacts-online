@@ -6,8 +6,8 @@ spring:
   profiles:
     active: development #by default, the active profile is development, during production it will be replaced with production due to Azure's environment variables
 
-  mvc:
-    throw-exception-if-no-handler-found: true
+  #mvc:
+    #throw-exception-if-no-handler-found: true
 
   web:
     resources:
@@ -17,13 +17,13 @@ api:
   endpoint:
     base-url: /api/v1
 server:
-  port: 90
+  port: 8080
 #to expose end point to actuator
 Management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,env,beans,configprops,heapdump,httpexchanges,loggers,mappings,custom-beans
+        include: health,info,metrics,env,beans,configprops,heapdump,httpexchanges,loggers,mappings,custom-beans,prometheus
   endpoint:
     health:
       show-details: always
@@ -44,6 +44,9 @@ Management:
       enabled: true
     os:
       enabled: true
+  tracing:
+    sampling:
+      probability: 1 #only for demo purpose, change it back to 0.1 in production
 info:
   app:
     name: tjtechy-artifacts-online
