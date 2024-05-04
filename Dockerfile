@@ -13,4 +13,4 @@ COPY --from=builder application/application/ ./
 #ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]##for springboot 3.2 below
 ##for springboot 3.2 and above
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
-##for springboot 3.2 and above
+##for springboot 3.2.0 and above The JarLauncher has been relocated to a new package since spring boot 3.2.0

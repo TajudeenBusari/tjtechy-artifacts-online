@@ -6,9 +6,6 @@ spring:
   profiles:
     active: development #by default, the active profile is development, during production it will be replaced with production due to Azure's environment variables
 
-  #mvc:
-    #throw-exception-if-no-handler-found: true
-
   web:
     resources:
       add-mappings: false
