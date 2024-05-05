@@ -1,9 +1,13 @@
 package com.tjtechy.artifactsOnline.system.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tjtechy.artifactsOnline.system.Result;
 import com.tjtechy.artifactsOnline.system.StatusCode;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,6 +20,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 //import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -81,6 +89,40 @@ public class ExceptionHandlerAdvice {
     return new Result(false, StatusCode.FORBIDDEN, "No permission", exception.getMessage());
   }
 
+  @ExceptionHandler({HttpClientErrorException.class, HttpServerErrorException.class})
+//  @ResponseStatus(HttpStatus.NOT_FOUND)
+  //another way to write the exception handling
+  ResponseEntity<Result> handleRestClientException(HttpStatusCodeException exception) throws JsonProcessingException {
+
+    /**
+     * format the message when api key is not correct
+     *
+     */
+
+    String exceptionMessage = exception.getMessage();
+
+    //replace <EOL> with actual newlines
+    exceptionMessage = exceptionMessage.replace("<EOL>", "\n");
+
+    //Extract the JSON part of the string
+    String jsonPath = exceptionMessage.substring(exceptionMessage.indexOf("{"), exceptionMessage.lastIndexOf("}") + 1);
+
+    //create an objectMapper instance.
+    ObjectMapper mapper = new ObjectMapper();
+
+    //parse JSON string to JsonNode
+    JsonNode rootNode = mapper.readTree(jsonPath);
+
+    //extract the message
+    String formattedExceptionMessage = rootNode.path("error").path("message").asText();
+
+    return new ResponseEntity<>(new Result(false,
+            exception.getStatusCode().value(),
+            "A rest client error occurs, see data for details.",
+            formattedExceptionMessage),
+            exception.getStatusCode());
+  }
+
   /**
    * fallback handles any unhandled exceptions
    * @param exception
@@ -99,3 +141,4 @@ public class ExceptionHandlerAdvice {
 
 //we don't to add data in the Result object cos it will  be null
 //add annotation to this method to tell spring to know which exception the method iS handling
+

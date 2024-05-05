@@ -279,6 +279,19 @@ class ArtifactControllerTest {
             .andExpect(jsonPath("$.data").isEmpty());
   }
 
+  @Test
+  void testSummarizeArtifactSuccess() throws Exception {
+    //Given
+    given(this.artifactService.summarize(Mockito.anyList())).willReturn("The summary includes six artifacts, owned by three wizards.");
+    //When and Then
+    this.mockMvc.perform(get(this.baseUrl + "/artifacts/summary")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Summarize Success"))
+            .andExpect(jsonPath("$.data").value("The summary includes six artifacts, owned by three wizards."));
+  }
+
 }
 
 
