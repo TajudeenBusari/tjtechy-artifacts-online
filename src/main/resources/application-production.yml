@@ -13,6 +13,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none #turn off the DDL auto generation
+ai:
+  openai:
+    endpoint: ${AI_OPENAI_ENDPOINT:https://api.openai.com/v1/chat/completions}
+    api-key: ${AI_OPENAI_API_KEY:your-openai-api-key} #secret from azure key vault. I have not implemented this for the environment
+#it is not a good practise to save secrete key in the environment variable of IDE, so it should be saved in the azure key vault
 
 
 

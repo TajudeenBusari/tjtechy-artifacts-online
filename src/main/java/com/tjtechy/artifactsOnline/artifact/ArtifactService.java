@@ -1,6 +1,13 @@
 package com.tjtechy.artifactsOnline.artifact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tjtechy.artifactsOnline.artifact.dto.ArtifactDto;
 import com.tjtechy.artifactsOnline.artifact.utils.IdWorker;
+import com.tjtechy.artifactsOnline.client.ai.chat.ChatClient;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.ChatRequest;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.ChatResponse;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.Message;
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
@@ -18,11 +25,14 @@ public class ArtifactService {
 
   private final IdWorker idWorker; //generate the unique Id for artifacts for us
 
+  private final ChatClient chatClient;
 
-  public ArtifactService(ArtifactRepository artifactRepository, IdWorker idWorker) {
+
+  public ArtifactService(ArtifactRepository artifactRepository, IdWorker idWorker, ChatClient chatClient) {
 
     this.artifactRepository = artifactRepository;
     this.idWorker = idWorker;
+    this.chatClient = chatClient;
   }
 
   @Observed(name = "artifact", contextualName = "findByIdService")
@@ -68,6 +78,20 @@ public class ArtifactService {
     this.artifactRepository.findById(artifactId)
             .orElseThrow(() -> new ObjectNotFoundException("artifact", artifactId));
     this.artifactRepository.deleteById(artifactId);
+  }
+
+  public String summarize(List<ArtifactDto> artifactDtos) throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonArray = objectMapper.writeValueAsString(artifactDtos);
+
+    //prepare messages for summarizing
+    List<Message> messages = List.of(
+            new Message("system", "Your task is to generate a short summary of a given JSON array in at most 100 words. The summary must include the number of artifacts, each artifact's description and the ownership information. Don't mention that the summary is from a given JSON array."),
+            new Message("user", jsonArray)
+    );
+    ChatRequest chatRequest = new ChatRequest("gpt-3.5-turbo", messages);
+    ChatResponse chatResponse = this.chatClient.generate(chatRequest); //tell chatClient to generate a text summary based on given chatRequest
+    return chatResponse.choices().get(0).message().content();
 
   }
 }

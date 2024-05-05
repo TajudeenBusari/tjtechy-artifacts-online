@@ -1,5 +1,6 @@
 package com.tjtechy.artifactsOnline.artifact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tjtechy.artifactsOnline.artifact.converter.ArtifactDtoToArtifactConverter;
 import com.tjtechy.artifactsOnline.artifact.converter.ArtifactToArtifactDtoConverter;
 import com.tjtechy.artifactsOnline.artifact.dto.ArtifactDto;
@@ -93,6 +94,21 @@ public class ArtifactController {
     this.artifactService.delete(artifactId);
     // we are using the Result method with only 3 parameters in the Result class/object
     return new Result(true, StatusCode.SUCCESS, "Delete Success");
+  }
+
+  //define a method for artifacts summarization
+  @GetMapping("/summary")
+  public Result summarizeArtifacts() throws JsonProcessingException {
+
+    List<Artifact> foundArtifacts = this.artifactService.findAll();
+
+    //convert found artifacts to a list of artifactDtos
+    List<ArtifactDto> foundArtifactDtos = foundArtifacts.stream()
+            .map(this.artifactToArtifactDtoConverter::convert)
+            .collect(Collectors.toList());
+    String artifactSummary = this.artifactService.summarize(foundArtifactDtos);
+
+    return new Result(true, StatusCode.SUCCESS, "Summarize Success", artifactSummary);
   }
 
 }

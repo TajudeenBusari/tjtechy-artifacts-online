@@ -1,8 +1,17 @@
 package com.tjtechy.artifactsOnline.artifact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tjtechy.artifactsOnline.artifact.dto.ArtifactDto;
 import com.tjtechy.artifactsOnline.artifact.utils.IdWorker;
+import com.tjtechy.artifactsOnline.client.ai.chat.ChatClient;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.ChatRequest;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.ChatResponse;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.Choice;
+import com.tjtechy.artifactsOnline.client.ai.chat.dto.Message;
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import com.tjtechy.artifactsOnline.wizard.Wizard;
+import com.tjtechy.artifactsOnline.wizard.dto.WizardDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +42,9 @@ class ArtifactServiceTest {
 
   @Mock
   IdWorker idWorker;
+
+  @Mock
+  ChatClient chatClient;
 
   @InjectMocks //injects both mocks into the artifactService
   ArtifactService artifactService;
@@ -262,6 +274,48 @@ class ArtifactServiceTest {
     });
     //Then
     verify(artifactRepository, times(1)).findById("1250808601744904192");
+  }
+
+  //define a test method for summarize
+  @Test
+  void testSummarizeSuccess() throws JsonProcessingException {
+    //Given
+    //recall artifactDto contains a wizardDto, create it first
+    WizardDto wizardDto = new WizardDto(1, "Albus Dombledore", 2);
+
+    //create two artifactDto and put them in a list
+    List<ArtifactDto> artifactDtos = List.of(
+            new ArtifactDto("1250808601744904191", "Deluminator", "An Deluminator is a device invented by Albus Dumbledor...", "ImageUrl", wizardDto),
+            new ArtifactDto("1250808601744904193", "Elder Wand", "The Elder Wand, known as Deathstick or Wand of ...", "ImageUrl", wizardDto)
+    );
+
+    //define the behavior of chat client
+    //create list of messages
+
+    //prepare chatRequest
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonArray = objectMapper.writeValueAsString(artifactDtos);
+    List<Message> messages = List.of(
+            new Message("system", "Your task is to generate a short summary of a given JSON array in at most 100 words. The summary must include the number of artifacts, each artifact's description and the ownership information. Don't mention that the summary is from a given JSON array."),
+            new Message("user", jsonArray)
+    );
+
+    ChatRequest chatRequest = new ChatRequest("gpt-3.5-turbo", messages);
+
+    //prepare chatResponse
+    ChatResponse chatResponse = new ChatResponse(List.of(new
+            Choice(0, new Message("assistant", "A summary of two artifacts owned by Albus Dumbledor."))));
+
+    given(this.chatClient.generate(chatRequest)).willReturn(chatResponse);
+
+
+    //When
+    String summary = this.artifactService.summarize(artifactDtos);
+
+    //Then
+    assertThat(summary).isEqualTo("A summary of two artifacts owned by Albus Dumbledor.");
+    verify(this.chatClient, times(1)).generate(chatRequest);
+
   }
 
 }
