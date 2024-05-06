@@ -72,8 +72,8 @@ public class SecurityConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http
             .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                    .requestMatchers(HttpMethod.GET,  baseUrl + "/artifacts/**")
-                    .permitAll()
+                    .requestMatchers(HttpMethod.GET,  baseUrl + "/artifacts/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, baseUrl + "/artifacts/search").permitAll()
                     .requestMatchers(HttpMethod.GET, baseUrl + "/users/**")
                     .hasAuthority("ROLE_admin")//protect the endpoint
                     .requestMatchers(HttpMethod.POST, baseUrl + "/users")

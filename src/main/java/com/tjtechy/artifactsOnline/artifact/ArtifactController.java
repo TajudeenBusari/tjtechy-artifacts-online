@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -111,6 +112,20 @@ public class ArtifactController {
     String artifactSummary = this.artifactService.summarize(foundArtifactDtos);
 
     return new Result(true, StatusCode.SUCCESS, "Summarize Success", artifactSummary);
+  }
+
+  //search by criteria
+  @PostMapping("/search")
+  public Result findArtifactsByCriteria(@RequestBody Map<String, String> searchCriteria, Pageable pageable){
+
+    //user may provide one or more data to make their search, we use
+    // Map to map the request body in terms of key and value
+
+    Page<Artifact> artifactPage = this.artifactService.findByCriteria(searchCriteria, pageable);
+    //convert to dto
+    Page<ArtifactDto> artifactDtoPage = artifactPage.map(this.artifactToArtifactDtoConverter::convert);
+
+    return new Result(true, StatusCode.SUCCESS, "Search Success", artifactDtoPage);
   }
 
 }
