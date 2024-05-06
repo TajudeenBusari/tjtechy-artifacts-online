@@ -13,12 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -107,6 +113,55 @@ public class ArtifactControllerIntegrationTest {
             .andExpect(jsonPath("$.message").value("Find All Success"))
             .andExpect(jsonPath("$.data.content", Matchers.hasSize(7))); //after adding one more data, it now becomes 7 in DB
 
+  }
+
+  //
+  @Test
+  void testFndArtifactsByDescriptionSuccess() throws Exception {
+    //Given
+    Map<String, String> searchCriteria = new HashMap<>();
+    searchCriteria.put("description", "Deathstick"); //only exists once
+
+    //serialize map (java object) to json
+    String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+    MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+    requestParams.add("page", "0");
+    requestParams.add("size", "2");
+    requestParams.add("sort", "name,asc");
+
+    //When and //Then
+    this.mockMvc.perform(post(this.baseUrl + "/artifacts/search")
+            .contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Search Success"))
+            .andExpect(jsonPath("$.data.content", Matchers.hasSize(1)));
+  }
+
+  @Test
+  void testFndArtifactsByNameAndDescriptionSuccess() throws Exception {
+    //Given
+    Map<String, String> searchCriteria = new HashMap<>();
+    searchCriteria.put("name", "Elder Wand"); //only exists once
+    searchCriteria.put("description", "Deathstick"); //only exists once
+
+
+    //serialize map (java object) to json
+    String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+    MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+    requestParams.add("page", "0");
+    requestParams.add("size", "2");
+    requestParams.add("sort", "name,asc");
+
+    //When and //Then
+    this.mockMvc.perform(post(this.baseUrl + "/artifacts/search")
+                    .contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Search Success"))
+            .andExpect(jsonPath("$.data.content", Matchers.hasSize(1)));
   }
 
 }
