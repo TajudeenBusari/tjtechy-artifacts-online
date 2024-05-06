@@ -75,7 +75,7 @@ public class ArtifactControllerIntegrationTest {
             .andExpect(jsonPath("$.flag").value(true)) //import mockMvc request builder
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
             .andExpect(jsonPath("$.message").value("Find All Success"))
-            .andExpect(jsonPath("$.data", Matchers.hasSize(6))); //we have 6 artifacts in the db
+            .andExpect(jsonPath("$.data.content", Matchers.hasSize(6))); //we have 6 artifacts in the db
   }
 
   //Add artifact
@@ -105,7 +105,7 @@ public class ArtifactControllerIntegrationTest {
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
             .andExpect(jsonPath("$.message").value("Find All Success"))
-            .andExpect(jsonPath("$.data", Matchers.hasSize(7))); //after adding one more data, it now becomes 7 in DB
+            .andExpect(jsonPath("$.data.content", Matchers.hasSize(7))); //after adding one more data, it now becomes 7 in DB
 
   }
 

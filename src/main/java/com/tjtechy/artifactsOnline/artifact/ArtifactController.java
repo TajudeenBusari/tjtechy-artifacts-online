@@ -8,6 +8,8 @@ import com.tjtechy.artifactsOnline.system.Result;
 import com.tjtechy.artifactsOnline.system.StatusCode;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,16 +51,16 @@ public class ArtifactController {
 
   //find all artifacts
   @GetMapping
-  public Result findAllArtifacts(){
+  public Result findAllArtifacts(Pageable pageable){
 
-    List<Artifact> foundArtifacts = this.artifactService.findAll();
+    Page<Artifact> artifactPage = this.artifactService.findAll(pageable);
 
-    //convert found artifacts to a list of artifactDtos
-    List<ArtifactDto> foundArtifactDtos = foundArtifacts.stream()
-            .map(this.artifactToArtifactDtoConverter::convert)
-            .collect(Collectors.toList());
+    //convert found artifactPage to a artifactDtos
+    //page is also streamable, so we can use the map method directly
+    Page<ArtifactDto> foundArtifactDtoPage = artifactPage
+            .map(this.artifactToArtifactDtoConverter::convert);
 
-    return new Result(true, StatusCode.SUCCESS, "Find All Success", foundArtifactDtos);
+    return new Result(true, StatusCode.SUCCESS, "Find All Success", foundArtifactDtoPage);
   }
 
   //create artifact

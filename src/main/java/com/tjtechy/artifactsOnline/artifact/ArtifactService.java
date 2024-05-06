@@ -12,6 +12,8 @@ import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,6 +95,10 @@ public class ArtifactService {
     ChatResponse chatResponse = this.chatClient.generate(chatRequest); //tell chatClient to generate a text summary based on given chatRequest
     return chatResponse.choices().get(0).message().content();
 
+  }
+
+  public Page<Artifact> findAll(Pageable pageable) {
+    return this.artifactRepository.findAll(pageable);
   }
 }
 
