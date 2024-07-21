@@ -6,6 +6,15 @@ spring:
     #driver-class-name: org.h2.Driver
   jpa:
     show-sql: true
+  cloud:
+    azure:
+      storage:
+        account-name: ${AZURE_STORAGE_ACCOUNT_NAME:YOUR_ACCOUNT_NAME}
+        account-key: ${AZURE_STORAGE_ACCOUNT_KEY:YOUR_ACCOUNT_KEY}
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 20MB
 ai:
   openai:
     endpoint: ${AI_OPENAI_ENDPOINT:https://api.openai.com/v1/chat/completions}
@@ -13,3 +22,4 @@ ai:
 
 #retrieve the end point from environment variable. initialize with a value. And same for API KEY
 #THE API KEY has also been inputted in the environment variable of the project
+#you can state the file path of the environment variable in the application.properties file

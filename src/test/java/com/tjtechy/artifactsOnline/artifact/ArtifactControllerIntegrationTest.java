@@ -168,9 +168,9 @@ public class ArtifactControllerIntegrationTest {
 
 /**
  * the last two annotations are optional
- * When test is luanched, we are testing from controller to the database, we're
+ * When test is launched, we are testing from controller to the database, we're
  * not mocking service of repos classes
  * To perform integration testing when spring security is on, we need to use the
  * addBeforeEach to add the token needed to perform the test
- * Remember to add thie maven dependency: spring security test from maven repo
+ * Remember to add the maven dependency: spring security test from maven repo
  */

@@ -123,6 +123,12 @@ public class ExceptionHandlerAdvice {
             exception.getStatusCode());
   }
 
+  @ExceptionHandler(CustomBlobStorageException.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  Result handleCustomBlobStorageException(CustomBlobStorageException ex){
+    return new Result(false, StatusCode.INTERNAL_SERVER_ERROR, ex.getMessage(), ex.getCause().getMessage());
+  }
+
   /**
    * fallback handles any unhandled exceptions
    * @param exception
