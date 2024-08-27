@@ -25,7 +25,7 @@ Management:
     health:
       show-details: always
       probes:
-        enabled: truef
+        enabled: true
     env:
       show-values: always
 
