@@ -8,6 +8,9 @@ import com.tjtechy.artifactsOnline.client.imagestorage.ImageStorageClient;
 import com.tjtechy.artifactsOnline.system.Result;
 import com.tjtechy.artifactsOnline.system.StatusCode;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Tag(
+        name = "CRUD REST APIs for artifacts Resource",
+        description = "CRUD REST APIs - Create Artifact, Update Artifact, Get All Artifacts, Get Artifact, Get Artifact summary, Delete Artifact"
+)
 @RestController
 @RequestMapping("${api.endpoint.base-url}/artifacts")
 public class ArtifactController {
@@ -47,6 +54,14 @@ public class ArtifactController {
   }
 
   //find a particular artifact
+  @Operation(
+          summary = "Get Artifact by Id REST API",
+          description = "Get Artifact is used to get artifact in database"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @GetMapping("/{artifactId}")
   public Result findArtifactById(@PathVariable String artifactId){
 
@@ -59,6 +74,14 @@ public class ArtifactController {
   }
 
   //find all artifacts
+  @Operation(
+          summary = "Get all Artifacts REST API",
+          description = "Get all Artifacts is used to retrieve all artifacts in database"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @GetMapping
   public Result findAllArtifacts(Pageable pageable){
 
@@ -73,6 +96,14 @@ public class ArtifactController {
   }
 
   //create artifact
+  @Operation(
+          summary = "Add Artifact REST API",
+          description = "Add Artifact is used to create new artifact in database"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @PostMapping
   public Result addArtifact(@Valid @RequestBody ArtifactDto artifactDto){
 
@@ -87,6 +118,14 @@ public class ArtifactController {
   }
 
   //update artifact
+  @Operation(
+          summary = "Update Artifact REST API",
+          description = "Update Artifact is used to update an existing artifact in database"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @PutMapping("/{artifactId}")
   public Result updateArtifact(@PathVariable String artifactId,
                                @Valid @RequestBody ArtifactDto artifactDto){
@@ -100,6 +139,14 @@ public class ArtifactController {
   }
 
   //Delete artifact
+  @Operation(
+          summary = "Delete Artifact REST API",
+          description = "Delete Artifact is used to remove an existing artifact in database"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @DeleteMapping("/{artifactId}")
   public Result deleteArtifact(@PathVariable String artifactId){
     this.artifactService.delete(artifactId);
@@ -108,6 +155,14 @@ public class ArtifactController {
   }
 
   //define a method for artifacts summarization
+  @Operation(
+          summary = "Summarize Artifacts REST API",
+          description = "Summarize Artifacts is used to get the summary of artifacts"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @GetMapping("/summary")
   public Result summarizeArtifacts() throws JsonProcessingException {
 
@@ -123,6 +178,14 @@ public class ArtifactController {
   }
 
   //search by criteria
+  @Operation(
+          summary = "Search Artifacts REST API",
+          description = "Search Artifacts is used to find artifact by criteria specified in the request body"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @PostMapping("/search")
   public Result findArtifactsByCriteria(@RequestBody Map<String, String> searchCriteria, Pageable pageable){
 
@@ -136,6 +199,14 @@ public class ArtifactController {
     return new Result(true, StatusCode.SUCCESS, "Search Success", artifactDtoPage);
   }
 
+  @Operation(
+          summary = "Upload Artifact image REST API",
+          description = "Upload Artifact is used to upload artifact image to azure storage blob"
+  )
+  @ApiResponse(
+          responseCode = "200",
+          description = "HTTP Status 200 SUCCESS"
+  )
   @PostMapping("/images")
   public Result uploadImage(@RequestParam String containerName, @RequestParam MultipartFile file) throws IOException {
     try (InputStream inputStream = file.getInputStream()){

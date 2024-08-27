@@ -11,7 +11,7 @@ public class WizardToWizardDtoConverter implements Converter<Wizard, WizardDto> 
   @Override
   public WizardDto convert(Wizard source) {
 
-    //since WizardDti is a record, pass all args
+    //since WizardDto is a record, pass all args
     WizardDto wizardDto = new WizardDto(
             source.getId(),
             source.getName(),

@@ -4,6 +4,7 @@ spring:
     username: sa
     password:
     #driver-class-name: org.h2.Driver
+    #http://localhost:8080/h2-console
   jpa:
     show-sql: true
   cloud:
