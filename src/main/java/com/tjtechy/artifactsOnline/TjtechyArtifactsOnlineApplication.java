@@ -51,6 +51,9 @@ public class TjtechyArtifactsOnlineApplication {
 
 
 }
-//login username = john, password = 123456
+//login username = john, password = 123456 ---> Admin and also a User userId =1
+//login username = eric, password = 654321 -->normal user userId =2
+//login username = tom, password =  -->normal user userId =3
+
 //#http://localhost:8080/h2-console
 //http://localhost:8080/swagger-ui/index.html

@@ -2,6 +2,8 @@ package com.tjtechy.artifactsOnline.tjtechyuser;
 
 import com.tjtechy.artifactsOnline.system.exception.ObjectNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,9 +50,19 @@ public class UserService implements UserDetailsService {
     //first find by id or else throw exception
     TJUser oldTJUser = this.userRepository.findById(userId)
             .orElseThrow(() -> new ObjectNotFoundException("user", userId));
-    oldTJUser.setUsername(update.getUsername());
-    oldTJUser.setEnabled(update.isEnabled());
-    oldTJUser.setRoles(update.getRoles());
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    //if the user is not an admin, then the user can only update their username
+    if(authentication.getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_admin"))){
+      oldTJUser.setUsername(update.getUsername());
+    }
+    else {
+      //if the user is an admin, then the user can update username, enabled and roles.
+      oldTJUser.setUsername(update.getUsername());
+      oldTJUser.setEnabled(update.isEnabled());
+      oldTJUser.setRoles(update.getRoles());
+    }
     return this.userRepository.save(oldTJUser);
   }
 
