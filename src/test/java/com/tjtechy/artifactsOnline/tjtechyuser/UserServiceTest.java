@@ -9,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -163,32 +166,86 @@ class UserServiceTest {
   //5. update user
   //POSITIVE scenario
   @Test
-  void testUpdateSuccess(){
+  void testUpdateByAdminSuccess(){
     //Given
     //create some old user data that will be updated
+    //john is updating eric, else part in the update (service layer)
     TJUser oldUser = new TJUser();
-    oldUser.setId(1);
-    oldUser.setUsername("john");
-    oldUser.setPassword("123456");
+    oldUser.setId(2);
+    oldUser.setUsername("eric");
+    oldUser.setPassword("654321");
     oldUser.setEnabled(true);
-    oldUser.setRoles("admin user");
+    oldUser.setRoles("user");
 
     TJUser update = new TJUser();
-    update.setUsername("john-update");
-    update.setPassword("123456");
+    update.setUsername("eric-update");
+    update.setPassword("654321");
     update.setEnabled(true);
-    update.setRoles("admin user");
+    update.setRoles("admin user"); //promote/update eric to admin role
 
-    given(this.userRepository.findById(1)).willReturn(Optional.of(oldUser));
+    given(this.userRepository.findById(2)).willReturn(Optional.of(oldUser));
     given(this.userRepository.save(oldUser)).willReturn(oldUser);
 
+    var tjUser = new TJUser(); //create a fake user
+    tjUser.setRoles("admin");
+    var myUserPrincipal = new MyUserPrincipal(tjUser); //wrap it into the principal
+
+    //create a fake security context
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+
+    //create a fake authentication context
+    securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(myUserPrincipal, null, myUserPrincipal.getAuthorities()));
+    SecurityContextHolder.setContext(securityContext);
+
     //When
-    TJUser updatedUser = this.userService.update(1, update);
+    TJUser updatedUser = this.userService.update(2, update);
 
     //Then
-    assertThat(updatedUser.getId()).isEqualTo(1);
+    assertThat(updatedUser.getId()).isEqualTo(2);
     assertThat(updatedUser.getUsername()).isEqualTo(update.getUsername());
-    verify(this.userRepository, times(1)).findById(1);
+    verify(this.userRepository, times(1)).findById(2);
+    verify(this.userRepository, times(1)).save(oldUser);
+  }
+
+  @Test
+  void testUpdateByUserSuccess(){
+    //Given
+    //create some old user data that will be updated
+    //john is updating eric, else part in the update (service layer)
+    TJUser oldUser = new TJUser();
+    oldUser.setId(2);
+    oldUser.setUsername("eric");
+    oldUser.setPassword("654321");
+    oldUser.setEnabled(true);
+    oldUser.setRoles("user");
+
+    TJUser update = new TJUser();
+    update.setUsername("eric-update");
+    update.setPassword("654321");
+    update.setEnabled(true);
+    update.setRoles("user"); //promote/update eric to admin role
+
+    given(this.userRepository.findById(2)).willReturn(Optional.of(oldUser));
+    given(this.userRepository.save(oldUser)).willReturn(oldUser);
+
+    var tjUser = new TJUser(); //create a fake user
+    tjUser.setRoles("user");
+    var myUserPrincipal = new MyUserPrincipal(tjUser); //wrap it into the principal
+
+    //create a fake security context
+    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+
+    //create a fake authentication context
+    securityContext.setAuthentication(new UsernamePasswordAuthenticationToken(myUserPrincipal, null, myUserPrincipal.getAuthorities()));
+    SecurityContextHolder.setContext(securityContext);
+
+    //When
+    TJUser updatedUser = this.userService.update(2, update);
+
+    //Then
+    assertThat(updatedUser.getId()).isEqualTo(2);
+    assertThat(updatedUser.getUsername()).isEqualTo(update.getUsername());
+    verify(this.userRepository, times(1)).findById(2);
     verify(this.userRepository, times(1)).save(oldUser);
   }
 

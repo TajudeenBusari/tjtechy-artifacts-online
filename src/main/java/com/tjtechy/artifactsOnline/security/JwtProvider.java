@@ -1,5 +1,6 @@
 package com.tjtechy.artifactsOnline.security;
 
+import com.tjtechy.artifactsOnline.tjtechyuser.MyUserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -36,6 +37,7 @@ public class JwtProvider {
             .issuedAt(now)
             .expiresAt(now.plus(expiresIn, ChronoUnit.HOURS))
             .subject(authentication.getName())
+            .claim("userId", ((MyUserPrincipal)(authentication.getPrincipal())).getTjUser().getId())
             .claim("authorities", authorities) //custom custom
             .build();
     //encode claim

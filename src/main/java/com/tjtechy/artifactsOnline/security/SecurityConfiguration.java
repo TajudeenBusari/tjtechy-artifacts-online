@@ -51,14 +51,18 @@ public class SecurityConfiguration {
 
   private final CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler;
 
+  private final UserRequestAuthorizationManager userRequestAuthorizationManager;
+
   //generate a constructor
   public SecurityConfiguration(CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint,
                                CustomBearerTokenAuthenticationEntryPoint customBearerTokenAuthenticationEntryPoint,
-                               CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler)
+                               CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler,
+                               UserRequestAuthorizationManager userRequestAuthorizationManager)
           throws NoSuchAlgorithmException {
     this.customBasicAuthenticationEntryPoint = customBasicAuthenticationEntryPoint;
     this.customBearerTokenAuthenticationEntryPoint = customBearerTokenAuthenticationEntryPoint;
     this.customBearerTokenAccessDeniedHandler = customBearerTokenAccessDeniedHandler;
+    this.userRequestAuthorizationManager = userRequestAuthorizationManager;
 
     //Generate a public/private key pair in java
     KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -70,18 +74,16 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    //permitAll, hasAuthority, authenticated is defined under .access(check for more info)
     return http
             .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers(HttpMethod.GET,  baseUrl + "/artifacts/**").permitAll()
                     .requestMatchers(HttpMethod.POST, baseUrl + "/artifacts/search").permitAll()
-                    .requestMatchers(HttpMethod.GET, baseUrl + "/users/**")
-                    .hasAuthority("ROLE_admin")//protect the endpoint
-                    .requestMatchers(HttpMethod.POST, baseUrl + "/users")
-                    .hasAuthority("ROLE_admin")//protect the endpoint
-                    .requestMatchers(HttpMethod.PUT, baseUrl + "/users/**")
-                    .hasAuthority("ROLE_admin") //protect the endpoint
-                    .requestMatchers(HttpMethod.DELETE, baseUrl + "/users/**")
-                    .hasAuthority("ROLE_admin")//protect the endpoint
+                    .requestMatchers(HttpMethod.GET, baseUrl + "/users").hasAuthority("ROLE_admin")//protect the endpoint
+                    .requestMatchers(HttpMethod.GET, baseUrl + "/users/**").access(this.userRequestAuthorizationManager)//The authorization rule is defined in the UserRequestAuthorizationManager
+                    .requestMatchers(HttpMethod.POST, baseUrl + "/users").hasAuthority("ROLE_admin")//protect the endpoint
+                    .requestMatchers(HttpMethod.PUT, baseUrl + "/users/**").access(this.userRequestAuthorizationManager)//The authorization rule is defined in the UserRequestAuthorizationManager
+                    .requestMatchers(HttpMethod.DELETE, baseUrl + "/users/**").hasAuthority("ROLE_admin")//protect the endpoint
                     .requestMatchers(EndpointRequest.to("health", "info", "prometheus")).permitAll()
                     .requestMatchers(EndpointRequest.toAnyEndpoint().excluding("health", "info", "prometheus")).hasAuthority("ROLE_admin")
                     .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
@@ -169,10 +171,10 @@ the strength of password encoder is 12
 *
 */
 /*we define two RSA key to generate the jwt
-* Anytime, the application is restarted, ypu have a new pair of keys (public and private)
+* Anytime, the application is restarted, you have a new pair of keys (public and private)
 * */
 /**
- * so if you provide a a wrong user or password, you will see a meaningful
+ * so if you provide a wrong user or password, you will see a meaningful
  * response instead default unauthorized because we have:
  * Registered the customBasicAuthenticationEntryPoint
  * Regisyter the CustomBearerTokenAuthenticationEntryPoint with the oauth2ResourceServer
